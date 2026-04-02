@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AXIOM — The Intelligence Layer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #8B5CF6;
+      --primary-light: #A78BFA;
+      --primary-dark: #6D28D9;
+      --secondary: #06B6D4;
+      --cta: #FBBF24;
+      --bg: #0A0A18;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.07);
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(139,92,246,0.4);
+      --glow: 0 0 40px rgba(139,92,246,0.25);
+      --radius: 16px;
+      --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    ::selection { background: rgba(139,92,246,0.4); color: #fff; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--primary-dark); border-radius: 3px; }
+
+    /* ===== UTILITY ===== */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 0%, var(--primary-light) 40%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gradient-text-gold {
+      background: linear-gradient(135deg, var(--cta) 0%, #F97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px; border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; font-size: 15px;
+      cursor: pointer; border: none;
+      transition: all var(--transition);
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(139,92,246,0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(139,92,246,0.5);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--border-hover);
+      background: rgba(139,92,246,0.08);
+      transform: translateY(-2px);
+    }
+    .btn-cta {
+      background: linear-gradient(135deg, var(--cta) 0%, #F97316 100%);
+      color: #0A0A18;
+      box-shadow: 0 4px 24px rgba(251,191,36,0.3);
+    }
+    .btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(251,191,36,0.5);
+    }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--primary-light);
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.25);
+      padding: 6px 14px; border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .section-label::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--primary-light);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ===== CANVAS BACKGROUND ===== */
+    #bg-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+    .bg-orbs {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.15;
+      animation: orb-float linear infinite;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      top: -200px; left: -150px;
+      animation-duration: 20s; animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+      top: 30%; right: -150px;
+      animation-duration: 25s; animation-delay: -8s;
+    }
+    .orb-3 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #EC4899 0%, transparent 70%);
+      bottom: 10%; left: 20%;
+      animation-duration: 18s; animation-delay: -4s;
+    }
+    @keyframes orb-float {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -40px) scale(1.05); }
+      66% { transform: translate(-20px, 30px) scale(0.95); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 0;
+      transition: all 400ms ease;
+    }
+    nav.scrolled {
+      background: rgba(10,10,24,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 20px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .logo-mark::after {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.9);
+      border-radius: 3px;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px; font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 15px; font-weight: 500;
+      transition: color var(--transition);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--primary-light);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform var(--transition);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px; border: none; background: none;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--text); border-radius: 2px;
+      transition: all var(--transition);
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed; top: 80px; left: 0; right: 0;
+      background: rgba(10,10,24,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px 28px;
+      z-index: 999;
+      flex-direction: column; gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      text-decoration: none; color: var(--text-muted);
+      font-size: 16px; font-weight: 500;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+      transition: color var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--text); }
+    .mobile-menu .btn { margin-top: 8px; justify-content: center; }
+
+    /* ===== HERO ===== */
+    #hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 120px 0 80px;
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center;
+    }
+    .hero-content { position: relative; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 500;
+      color: var(--cta);
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.25);
+      padding: 6px 14px; border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    .hero-badge svg { width: 14px; height: 14px; }
+    .hero-h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(44px, 5.5vw, 76px);
+      font-weight: 700; line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    .hero-sub {
+      font-size: clamp(16px, 1.8vw, 19px);
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-bottom: 40px;
+      line-height: 1.65;
+    }
+    .hero-btns {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+    .hero-social-proof {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .avatars {
+      display: flex;
+    }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--bg);
+      margin-left: -10px;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+    }
+    .avatars .avatar:first-child { margin-left: 0; }
+    .avatar:nth-child(2) { background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%); }
+    .avatar:nth-child(3) { background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%); }
+    .avatar:nth-child(4) { background: linear-gradient(135deg, var(--cta) 0%, #F97316 100%); }
+    .avatar:nth-child(5) { background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%); }
+    .social-text { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+    .social-text strong { color: var(--text); display: block; }
+
+    /* Hero Visual */
+    .hero-visual {
+      position: relative; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .hero-orb-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(139,92,246,0.2);
+      animation: ring-pulse 4s ease-in-out infinite;
+    }
+    .ring-1 { width: 320px; height: 320px; animation-delay: 0s; }
+    .ring-2 { width: 450px; height: 450px; animation-delay: 0.5s; opacity: 0.5; }
+    .ring-3 { width: 580px; height: 580px; animation-delay: 1s; opacity: 0.25; }
+    @keyframes ring-pulse {
+      0%, 100% { transform: scale(1); opacity: inherit; }
+      50% { transform: scale(1.04); opacity: 0.1; }
+    }
+    .hero-core {
+      position: relative; z-index: 2;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(139,92,246,0.6) 0%, rgba(6,182,212,0.3) 50%, rgba(10,10,24,0.95) 100%);
+      border: 1px solid rgba(139,92,246,0.4);
+      box-shadow: 0 0 60px rgba(139,92,246,0.3), inset 0 0 60px rgba(139,92,246,0.1);
+      display: flex; align-items: center; justify-content: center;
+      animation: core-spin 20s linear infinite;
+    }
+    @keyframes core-spin {
+      0% { box-shadow: 0 0 60px rgba(139,92,246,0.3), inset 0 0 60px rgba(139,92,246,0.1); }
+      50% { box-shadow: 0 0 80px rgba(6,182,212,0.4), inset 0 0 80px rgba(6,182,212,0.15); }
+      100% { box-shadow: 0 0 60px rgba(139,92,246,0.3), inset 0 0 60px rgba(139,92,246,0.1); }
+    }
+    .core-inner {
+      width: 80px; height: 80px;
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 16px;
+      transform: rotate(45deg);
+      display: flex; align-items: center; justify-content: center;
+      animation: inner-counter 20s linear infinite;
+      background: rgba(139,92,246,0.2);
+    }
+    @keyframes inner-counter { from { transform: rotate(45deg); } to { transform: rotate(405deg); } }
+    .core-dot {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, var(--primary-light) 100%);
+      transform: rotate(-45deg);
+      box-shadow: 0 0 20px rgba(255,255,255,0.8);
+    }
+    /* Floating chips around the core */
+    .float-chip {
+      position: absolute;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text);
+      white-space: nowrap;
+      z-index: 3;
+    }
+    .chip-1 { top: 5%; left: 5%; animation: chip-float 6s ease-in-out infinite; }
+    .chip-2 { top: 5%; right: 0%; animation: chip-float 7s ease-in-out infinite reverse; }
+    .chip-3 { bottom: 10%; left: 0%; animation: chip-float 5s ease-in-out infinite 1s; }
+    .chip-4 { bottom: 5%; right: 5%; animation: chip-float 8s ease-in-out infinite 0.5s; }
+    @keyframes chip-float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    .chip-icon {
+      display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; margin-right: 6px;
+      vertical-align: middle;
+    }
+    .chip-green { background: #10B981; box-shadow: 0 0 6px #10B981; }
+    .chip-blue { background: var(--secondary); box-shadow: 0 0 6px var(--secondary); }
+    .chip-purple { background: var(--primary-light); box-shadow: 0 0 6px var(--primary-light); }
+    .chip-gold { background: var(--cta); box-shadow: 0 0 6px var(--cta); }
+
+    /* ===== SCROLL INDICATOR ===== */
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--text-muted); font-size: 12px;
+      animation: scroll-bounce 2s ease-in-out infinite;
+    }
+    .scroll-hint svg { width: 20px; height: 20px; }
+    @keyframes scroll-bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ===== TICKER ===== */
+    .ticker-wrap {
+      position: relative; z-index: 1;
+      padding: 16px 0;
+      background: rgba(139,92,246,0.06);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .ticker-inner {
+      display: flex; gap: 0;
+      animation: ticker-scroll 30s linear infinite;
+      width: max-content;
+    }
+    .ticker-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 32px;
+      font-size: 13px; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text-muted);
+      letter-spacing: 0.05em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--primary); }
+    @keyframes ticker-scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ===== FEATURES ===== */
+    #features {
+      position: relative; z-index: 1;
+      padding: 100px 0;
+    }
+    .section-header {
+      text-align: center; max-width: 680px; margin: 0 auto 64px;
+    }
+    .section-h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 4vw, 56px);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--text-muted); line-height: 1.65;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: all 300ms ease;
+      position: relative; overflow: hidden;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 400ms ease;
+    }
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: var(--glow);
+    }
+    .feature-card:hover::before { transform: scaleX(1); }
+    .card-glow {
+      position: absolute; top: -60px; right: -60px;
+      width: 180px; height: 180px; border-radius: 50%;
+      opacity: 0; transition: opacity 400ms ease;
+    }
+    .feature-card:hover .card-glow { opacity: 1; }
+    .feature-icon-wrap {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 22px;
+      position: relative;
+    }
+    .feature-icon-wrap svg { width: 24px; height: 24px; }
+    .fi-core { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); }
+    .fi-core svg, .fi-core .card-glow { color: var(--primary-light); }
+    .fi-core .card-glow { background: radial-gradient(circle, rgba(139,92,246,0.3), transparent 70%); }
+    .fi-vision { background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); }
+    .fi-vision svg { color: var(--secondary); }
+    .fi-vision .card-glow { background: radial-gradient(circle, rgba(6,182,212,0.3), transparent 70%); }
+    .fi-predict { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); }
+    .fi-predict svg { color: var(--cta); }
+    .fi-predict .card-glow { background: radial-gradient(circle, rgba(251,191,36,0.25), transparent 70%); }
+    .fi-flow { background: rgba(236,72,153,0.12); border: 1px solid rgba(236,72,153,0.3); }
+    .fi-flow svg { color: #EC4899; }
+    .fi-flow .card-glow { background: radial-gradient(circle, rgba(236,72,153,0.3), transparent 70%); }
+    .fi-guard { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); }
+    .fi-guard svg { color: #10B981; }
+    .fi-guard .card-glow { background: radial-gradient(circle, rgba(16,185,129,0.3), transparent 70%); }
+    .fi-mesh { background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); }
+    .fi-mesh svg { color: #818CF8; }
+    .fi-mesh .card-glow { background: radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%); }
+    .card-tag {
+      display: inline-flex; align-items: center;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 3px 9px;
+      border-radius: 100px; margin-bottom: 12px;
+    }
+    .tag-core { color: var(--primary-light); background: rgba(139,92,246,0.15); }
+    .tag-vision { color: var(--secondary); background: rgba(6,182,212,0.15); }
+    .tag-predict { color: var(--cta); background: rgba(251,191,36,0.15); }
+    .tag-flow { color: #EC4899; background: rgba(236,72,153,0.15); }
+    .tag-guard { color: #10B981; background: rgba(16,185,129,0.15); }
+    .tag-mesh { color: #818CF8; background: rgba(99,102,241,0.15); }
+    .feature-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px; font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .feature-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+    .card-footer-stat {
+      margin-top: 24px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700;
+    }
+    .stat-label { font-size: 12px; color: var(--text-muted); }
+    .card-arrow {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+    .feature-card:hover .card-arrow {
+      background: rgba(139,92,246,0.15);
+      border-color: var(--primary);
+    }
+    .card-arrow svg { width: 14px; height: 14px; color: var(--text-muted); }
+    .feature-card:hover .card-arrow svg { color: var(--primary-light); }
+
+    /* ===== STATS ===== */
+    #stats {
+      position: relative; z-index: 1;
+      padding: 80px 0;
+    }
+    .stats-bg {
+      background: rgba(139,92,246,0.05);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 60px 48px;
+      position: relative; overflow: hidden;
+    }
+    .stats-bg::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px; align-items: center;
+    }
+    .stat-card { text-align: center; }
+    .stat-divider {
+      width: 1px; height: 70px;
+      background: linear-gradient(to bottom, transparent, var(--border), transparent);
+      margin: 0 auto;
+    }
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 700; line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-desc { font-size: 15px; color: var(--text-muted); }
+    .stats-logo {
+      text-align: center; margin-bottom: 52px;
+    }
+    .stats-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 600; margin-bottom: 8px;
+    }
+    .stats-sub { color: var(--text-muted); font-size: 15px; }
+
+    /* ===== TRUST LOGOS ===== */
+    #trust {
+      position: relative; z-index: 1;
+      padding: 60px 0;
+    }
+    .trust-label {
+      text-align: center; font-size: 13px;
+      color: var(--text-muted); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 36px;
+    }
+    .logos-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 48px; flex-wrap: wrap;
+    }
+    .logo-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 600;
+      color: var(--text-muted);
+      transition: all var(--transition);
+      cursor: default;
+    }
+    .logo-pill:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: rgba(139,92,246,0.06);
+    }
+    .logo-pill-dot {
+      width: 20px; height: 20px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ===== CTA SECTION ===== */
+    #cta-section {
+      position: relative; z-index: 1;
+      padding: 100px 0;
+    }
+    .cta-box {
+      background: linear-gradient(135deg,
+        rgba(139,92,246,0.12) 0%,
+        rgba(6,182,212,0.06) 50%,
+        rgba(139,92,246,0.08) 100%
+      );
+      border: 1px solid rgba(139,92,246,0.25);
+      border-radius: 28px;
+      padding: 80px 48px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--primary-light) 50%, transparent 100%);
+    }
+    .cta-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(139,92,246,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 4.5vw, 62px);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 18px;
+    }
+    .cta-sub {
+      font-size: 18px; color: var(--text-muted);
+      max-width: 520px; margin: 0 auto 44px;
+      line-height: 1.6;
+    }
+    .email-form {
+      display: flex; gap: 12px;
+      max-width: 460px; margin: 0 auto;
+    }
+    .email-input {
+      flex: 1;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .email-input::placeholder { color: var(--text-muted); }
+    .email-input:focus { border-color: var(--primary); }
+    .cta-bottom {
+      margin-top: 28px; font-size: 13px; color: var(--text-muted);
+    }
+    .cta-bottom a { color: var(--primary-light); text-decoration: none; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 60px 0 32px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 48px;
+    }
+    .footer-brand p {
+      font-size: 14px; color: var(--text-muted);
+      max-width: 280px; margin-top: 14px; line-height: 1.7;
+    }
+    .footer-social {
+      display: flex; gap: 10px; margin-top: 20px;
+    }
+    .social-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all var(--transition);
+      text-decoration: none;
+    }
+    .social-btn svg { width: 16px; height: 16px; color: var(--text-muted); }
+    .social-btn:hover {
+      border-color: var(--border-hover);
+      background: rgba(139,92,246,0.1);
+    }
+    .social-btn:hover svg { color: var(--primary-light); }
+    .footer-col h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 600;
+      color: var(--text); margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a {
+      font-size: 14px; color: var(--text-muted);
+      text-decoration: none; transition: color var(--transition);
+    }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-bottom p { font-size: 13px; color: var(--text-muted); }
+    .footer-bottom-links {
+      display: flex; gap: 20px;
+    }
+    .footer-bottom-links a {
+      font-size: 13px; color: var(--text-muted);
+      text-decoration: none; transition: color var(--transition);
+    }
+    .footer-bottom-links a:hover { color: var(--text); }
+
+    /* ===== REVEAL ANIMATIONS ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 600ms ease, transform 600ms ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-32px);
+      transition: opacity 600ms ease, transform 600ms ease;
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(32px);
+      transition: opacity 600ms ease, transform 600ms ease;
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .delay-1 { transition-delay: 100ms; }
+    .delay-2 { transition-delay: 200ms; }
+    .delay-3 { transition-delay: 300ms; }
+    .delay-4 { transition-delay: 400ms; }
+    .delay-5 { transition-delay: 500ms; }
+    .delay-6 { transition-delay: 600ms; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+      .stat-divider { display: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-sub { margin: 0 auto 40px; }
+      .hero-btns { justify-content: center; }
+      .hero-social-proof { justify-content: center; }
+      .hero-visual { display: none; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stats-bg { padding: 40px 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .cta-box { padding: 52px 24px; }
+      .email-form { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background Orbs -->
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Particle Canvas -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ===== NAV ===== -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-mark"></div>
+      <span class="logo-text">AXIOM</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Product</a></li>
+      <li><a href="#stats">About</a></li>
+      <li><a href="#trust">Research</a></li>
+      <li><a href="#cta-section">Careers</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#cta-section" class="btn btn-ghost" style="padding:10px 20px;font-size:14px;">Sign In</a>
+      <a href="#cta-section" class="btn btn-primary" style="padding:10px 20px;font-size:14px;">
+        Get Started
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#features">Product</a>
+  <a href="#stats">About</a>
+  <a href="#trust">Research</a>
+  <a href="#cta-section">Careers</a>
+  <a href="#cta-section" class="btn btn-primary">Get Started</a>
+</div>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge reveal">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 4.5H14l-3.6 2.6 1.4 4.4L8 10 4.2 12.5l1.4-4.4L2 5.5h4.5z"/></svg>
+          Now in Public Beta — Join 12,000+ engineers
+        </div>
+        <h1 class="hero-h1 reveal delay-1">
+          The <span class="gradient-text">Intelligence</span><br/>Layer for the<br/>
+          <span class="gradient-text-gold">Modern Stack</span>
+        </h1>
+        <p class="hero-sub reveal delay-2">
+          AXIOM delivers enterprise-grade AI infrastructure that learns, adapts, and scales with your organization. From raw data to decisive action in milliseconds.
+        </p>
+        <div class="hero-btns reveal delay-3">
+          <a href="#cta-section" class="btn btn-primary">
+            Start Building Free
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+          <a href="#features" class="btn btn-ghost">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-1.5 4.5l5 2.5-5 2.5V5.5z"/></svg>
+            Watch Demo
+          </a>
+        </div>
+        <div class="hero-social-proof reveal delay-4">
+          <div class="avatars">
+            <div class="avatar">J</div>
+            <div class="avatar">M</div>
+            <div class="avatar">S</div>
+            <div class="avatar">A</div>
+            <div class="avatar">K</div>
+          </div>
+          <div class="social-text">
+            <strong>150+ enterprise teams</strong>
+            already building with AXIOM
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual reveal-right delay-2">
+        <div class="hero-orb-ring ring-3"></div>
+        <div class="hero-orb-ring ring-2"></div>
+        <div class="hero-orb-ring ring-1"></div>
+        <div class="hero-core">
+          <div class="core-inner">
+            <div class="core-dot"></div>
+          </div>
+        </div>
+        <div class="float-chip chip-1">
+          <span class="chip-icon chip-green"></span>Model Serving
+        </div>
+        <div class="float-chip chip-2">
+          <span class="chip-icon chip-blue"></span>99.9% Uptime
+        </div>
+        <div class="float-chip chip-3">
+          <span class="chip-icon chip-purple"></span>10B+ Params
+        </div>
+        <div class="float-chip chip-4">
+          <span class="chip-icon chip-gold"></span>4ms Latency
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker">
+    <div class="ticker-item"><span class="ticker-dot"></span>AXIOM Core v4.2 Released</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>SOC 2 Type II Certified</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>10 Billion Parameters Deployed</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Series B — $180M Raised</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>AXIOM Vision Now in GA</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>ISO 27001 Compliance</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>New: Multi-Modal Pipeline Support</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>150+ Enterprise Clients Worldwide</div>
+    <!-- Duplicate for seamless loop -->
+    <div class="ticker-item"><span class="ticker-dot"></span>AXIOM Core v4.2 Released</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>SOC 2 Type II Certified</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>10 Billion Parameters Deployed</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Series B — $180M Raised</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>AXIOM Vision Now in GA</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>ISO 27001 Compliance</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>New: Multi-Modal Pipeline Support</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>150+ Enterprise Clients Worldwide</div>
+  </div>
+</div>
+
+<!-- ===== FEATURES ===== -->
+<section id="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label reveal">Our Products</div>
+      <h2 class="section-h2 reveal delay-1">
+        The complete <span class="gradient-text">AI platform</span><br/>for serious builders
+      </h2>
+      <p class="section-sub reveal delay-2">
+        Six purpose-built products that compose into a unified intelligence stack. Each one production-ready, enterprise-tested, and infinitely scalable.
+      </p>
+    </div>
+    <div class="features-grid">
+
+      <!-- AXIOM Core -->
+      <div class="feature-card reveal delay-1">
+        <div class="card-glow" style="background:radial-gradient(circle, rgba(139,92,246,0.3), transparent 70%);"></div>
+        <div class="feature-icon-wrap fi-core">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="var(--primary-light)"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <div class="card-tag tag-core">Core</div>
+        <div class="feature-title">AXIOM Core</div>
+        <div class="feature-desc">Foundation model orchestration with dynamic routing, intelligent caching, and sub-millisecond inference across your entire model fleet.</div>
+        <div class="card-footer-stat">
+          <div>
+            <div class="stat-num gradient-text">4ms</div>
+            <div class="stat-label">P99 Latency</div>
+          </div>
+          <div class="card-arrow">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- AXIOM Vision -->
+      <div class="feature-card reveal delay-2">
+        <div class="card-glow" style="background:radial-gradient(circle, rgba(6,182,212,0.3), transparent 70%);"></div>
+        <div class="feature-icon-wrap fi-vision">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="var(--secondary)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="card-tag tag-vision">Vision</div>
+        <div class="feature-title">AXIOM Vision</div>
+        <div class="feature-desc">State-of-the-art computer vision pipeline with real-time object detection, semantic segmentation, and multi-modal understanding at scale.</div>
+        <div class="card-footer-stat">
+          <div>
+            <div class="stat-num" style="background:linear-gradient(135deg,var(--secondary),#3B82F6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">98.7%</div>
+            <div class="stat-label">mAP Score</div>
+          </div>
+          <div class="card-arrow">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- AXIOM Predict -->
+      <div class="feature-card reveal delay-3">
+        <div class="card-glow" style="background:radial-gradient(circle, rgba(251,191,36,0.25), transparent 70%);"></div>
+        <div class="feature-icon-wrap fi-predict">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="var(--cta)"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div class="card-tag tag-predict">Predict</div>
+        <div class="feature-title">AXIOM Predict</div>
+        <div class="feature-desc">Time-series forecasting and predictive analytics engine. Identify patterns in terabytes of data and surface actionable signals before they matter.</div>
+        <div class="card-footer-stat">
+          <div>
+            <div class="stat-num gradient-text-gold">3.2x</div>
+            <div class="stat-label">Accuracy Gain</div>
+          </div>
+          <div class="card-arrow">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- AXIOM Flow -->
+      <div class="feature-card reveal delay-4">
+        <div class="card-glow" style="background:radial-gradient(circle, rgba(236,72,153,0.3), transparent 70%);"></div>
+        <div class="feature-icon-wrap fi-flow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#EC4899"><path d="M5 12h14M5 12l4-4M5 12l4 4M19 12l-4-4M19 12l-4 4"/></svg>
+        </div>
+        <div class="card-tag tag-flow">Flow</div>
+        <div class="feature-title">AXIOM Flow</div>
+        <div class="feature-desc">Visual pipeline orchestration for complex multi-step AI workflows. Drag-and-drop composition, version control, and one-click deployment.</div>
+        <div class="card-footer-stat">
+          <div>
+            <div class="stat-num" style="background:linear-gradient(135deg,#EC4899,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">60%</div>
+            <div class="stat-label">Dev Time Saved</div>
+          </div>
+          <div class="card-arrow">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- AXIOM Guard -->
+      <div class="feature-card reveal delay-5">
+        <div class="card-glow" style="background:radial-gradient(circle, rgba(16,185,129,0.3), transparent 70%);"></div>
+        <div class="feature-icon-wrap fi-guard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#10B981"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <div class="card-tag tag-guard">Guard</div>
+        <div class="feature-title">AXIOM Guard</div>
+        <div class="feature-desc">AI governance, safety rails, and compliance automation. Detect hallucinations, enforce content policies, and maintain audit trails automatically.</div>
+        <div class="card-footer-stat">
+          <div>
+            <div class="stat-num" style="background:linear-gradient(135deg,#10B981,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">99.9%</div>
+            <div class="stat-label">Policy Uptime</div>
+          </div>
+          <div class="card-arrow">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- AXIOM Mesh -->
+      <div class="feature-card reveal delay-6">
+        <div class="card-glow" style="background:radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%);"></div>
+        <div class="feature-icon-wrap fi-mesh">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#818CF8"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><line x1="12" y1="7" x2="5" y2="17"/><line x1="12" y1="7" x2="19" y2="17"/><line x1="7" y1="19" x2="17" y2="19"/></svg>
+        </div>
+        <div class="card-tag tag-mesh">Mesh</div>
+        <div class="feature-title">AXIOM Mesh</div>
+        <div class="feature-desc">Federated model networking for distributed AI systems. Secure cross-org collaboration, privacy-preserving training, and global model synchronization.</div>
+        <div class="card-footer-stat">
+          <div>
+            <div class="stat-num" style="background:linear-gradient(135deg,#818CF8,var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">128</div>
+            <div class="stat-label">Active Nodes</div>
+          </div>
+          <div class="card-arrow">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-bg reveal">
+      <div class="stats-logo">
+        <div class="section-label" style="margin:0 auto 16px;">By the Numbers</div>
+        <h2 class="stats-headline">Infrastructure that <span class="gradient-text">scales without limits</span></h2>
+        <p class="stats-sub">Built for the demands of global enterprise AI from day one.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number gradient-text">10B+</div>
+          <div class="stat-desc">Parameters Under Management</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="background:linear-gradient(135deg,var(--secondary),#3B82F6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">99.99%</div>
+          <div class="stat-desc">Historical Uptime SLA</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number gradient-text-gold">150+</div>
+          <div class="stat-desc">Enterprise Clients</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="background:linear-gradient(135deg,#10B981,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">4ms</div>
+          <div class="stat-desc">Median Inference Latency</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRUST ===== -->
+<section id="trust">
+  <div class="container">
+    <p class="trust-label reveal">Trusted by teams at</p>
+    <div class="logos-row">
+      <div class="logo-pill reveal delay-1">
+        <div class="logo-pill-dot" style="background:linear-gradient(135deg,#3B82F6,#06B6D4);border-radius:5px;width:18px;height:18px;"></div>
+        Veritas AI
+      </div>
+      <div class="logo-pill reveal delay-2">
+        <div class="logo-pill-dot" style="background:linear-gradient(135deg,#EC4899,#8B5CF6);border-radius:5px;width:18px;height:18px;"></div>
+        Nebula Corp
+      </div>
+      <div class="logo-pill reveal delay-3">
+        <div class="logo-pill-dot" style="background:linear-gradient(135deg,var(--cta),#F97316);border-radius:5px;width:18px;height:18px;"></div>
+        Solaris Labs
+      </div>
+      <div class="logo-pill reveal delay-4">
+        <div class="logo-pill-dot" style="background:linear-gradient(135deg,#10B981,#3B82F6);border-radius:5px;width:18px;height:18px;"></div>
+        Quantum Edge
+      </div>
+      <div class="logo-pill reveal delay-5">
+        <div class="logo-pill-dot" style="background:linear-gradient(135deg,#818CF8,#06B6D4);border-radius:5px;width:18px;height:18px;"></div>
+        Meridian Systems
+      </div>
+      <div class="logo-pill reveal delay-6">
+        <div class="logo-pill-dot" style="background:linear-gradient(135deg,var(--primary),#EC4899);border-radius:5px;width:18px;height:18px;"></div>
+        Nova Dynamics
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section id="cta-section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <div class="cta-grid-bg"></div>
+      <div class="cta-content">
+        <div class="section-label" style="margin:0 auto 20px;">Start Today</div>
+        <h2 class="cta-h2">
+          Build the future<br/>with <span class="gradient-text">AXIOM</span>
+        </h2>
+        <p class="cta-sub">
+          Join thousands of engineers deploying production AI in days, not months. Free forever for individuals. Scale when you're ready.
+        </p>
+        <form class="email-form" onsubmit="handleSubmit(event)">
+          <input
+            type="email"
+            class="email-input"
+            placeholder="you@company.com"
+            required
+            id="email-input"
+          />
+          <button type="submit" class="btn btn-cta">
+            Start Building
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </button>
+        </form>
+        <p class="cta-bottom">
+          No credit card required. <a href="#">Read our privacy policy.</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" style="display:inline-flex;text-decoration:none;">
+          <div class="logo-mark"></div>
+          <span class="logo-text">AXIOM</span>
+        </a>
+        <p>The intelligence layer for the modern stack. Enterprise-grade AI infrastructure that scales with your ambition.</p>
+        <div class="footer-social">
+          <!-- X/Twitter -->
+          <a href="#" class="social-btn" aria-label="Twitter">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <!-- GitHub -->
+          <a href="#" class="social-btn" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          </a>
+          <!-- LinkedIn -->
+          <a href="#" class="social-btn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">AXIOM Core</a></li>
+          <li><a href="#">AXIOM Vision</a></li>
+          <li><a href="#">AXIOM Predict</a></li>
+          <li><a href="#">AXIOM Flow</a></li>
+          <li><a href="#">AXIOM Guard</a></li>
+          <li><a href="#">AXIOM Mesh</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Research</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">Status</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Community</a></li>
+          <li><a href="#">Security</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 AXIOM Technologies, Inc. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ===== PARTICLE CANVAS ===== */
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let W, H, animId;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const PARTICLE_COUNT = 80;
+  const COLORS = ['rgba(139,92,246,', 'rgba(6,182,212,', 'rgba(167,139,250,', 'rgba(251,191,36,'];
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.r = Math.random() * 1.5 + 0.3;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.alpha = Math.random() * 0.5 + 0.1;
+      this.vx = (Math.random() - 0.5) * 0.3;
+      this.vy = (Math.random() - 0.5) * 0.3;
+      this.life = 0;
+      this.maxLife = Math.random() * 300 + 200;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life++;
+      if (this.life > this.maxLife || this.x < 0 || this.x > W || this.y < 0 || this.y > H) {
+        this.reset();
+      }
+    }
+    draw() {
+      const fade = Math.min(this.life / 40, (this.maxLife - this.life) / 40, 1);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = this.color + (this.alpha * fade) + ')';
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const p = new Particle();
+    p.life = Math.random() * p.maxLife; // stagger
+    particles.push(p);
+  }
+
+  // Connection lines
+  function drawConnections() {
+    const MAX_DIST = 120;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MAX_DIST) {
+          const alpha = (1 - dist / MAX_DIST) * 0.08;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    drawConnections();
+    animId = requestAnimationFrame(animate);
+  }
+  animate();
+
+  /* ===== NAV SCROLL ===== */
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  /* ===== HAMBURGER ===== */
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  hamburger.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    const spans = hamburger.querySelectorAll('span');
+    if (open) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      const spans = hamburger.querySelectorAll('span');
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    });
+  });
+
+  /* ===== SCROLL REVEAL ===== */
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  /* ===== STAT COUNTER ===== */
+  function animateCounter(el, target, suffix, decimals = 0) {
+    const duration = 2000;
+    const start = performance.now();
+    const update = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const val = target * ease;
+      el.textContent = decimals ? val.toFixed(decimals) + suffix : Math.floor(val) + suffix;
+      if (t < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const nums = e.target.querySelectorAll('.stat-number');
+        nums.forEach(n => {
+          const text = n.textContent.trim();
+          if (text === '10B+') {
+            animateCounter(n, 10, 'B+');
+          } else if (text === '99.99%') {
+            animateCounter(n, 99.99, '%', 2);
+          } else if (text === '150+') {
+            animateCounter(n, 150, '+');
+          } else if (text === '4ms') {
+            animateCounter(n, 4, 'ms');
+          }
+        });
+        statObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const statsSection = document.querySelector('.stats-bg');
+  if (statsSection) statObserver.observe(statsSection);
+
+  /* ===== FORM SUBMIT ===== */
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    const input = document.getElementById('email-input');
+    btn.textContent = 'You\'re on the list!';
+    btn.style.background = 'linear-gradient(135deg,#10B981,#06B6D4)';
+    btn.style.color = '#fff';
+    input.value = '';
+    setTimeout(() => {
+      btn.innerHTML = 'Start Building <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 3000);
+  }
+
+  /* ===== MOUSE PARALLAX (hero visual) ===== */
+  const heroVisual = document.querySelector('.hero-visual');
+  if (heroVisual) {
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 12;
+      const y = (e.clientY / window.innerHeight - 0.5) * 12;
+      heroVisual.style.transform = `translate(${x}px, ${y}px)`;
+    }, { passive: true });
+  }
+
+  /* ===== SMOOTH ANCHOR SCROLL ===== */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href');
+      if (id === '#') return;
+      const target = document.querySelector(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
