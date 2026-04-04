@@ -37,7 +37,7 @@ Declared values (multiples of 4 only). Applied via nativewind utility classes on
 | Token | Value | Usage |
 |-------|-------|-------|
 | xs | 4px | Icon gaps, badge padding, chip inner spacing |
-| sm | 8px | Between list items, inline label spacing |
+| sm | 8px | Between list items, inline label spacing, horizontal padding inside renewal chips |
 | md | 16px | Default screen horizontal padding, card inner padding |
 | lg | 24px | Section vertical spacing, form field gaps |
 | xl | 32px | Dashboard total card padding, major section breaks |
@@ -46,7 +46,6 @@ Declared values (multiples of 4 only). Applied via nativewind utility classes on
 
 Exceptions:
 - Touch targets: minimum 44x44px on all interactive elements (ui-ux-pro-max CRITICAL rule). This may exceed the base grid — use 44px height as a floor even when token value is smaller.
-- Renewal chip strip: 12px horizontal padding inside each chip (between xs and sm — acceptable exception for compact chips).
 - Bottom sheet drag handle: 4px height × 32px width, centered, 8px vertical margin.
 
 ---
@@ -57,19 +56,20 @@ All sizes in logical pixels (dp on mobile, px on web). System font fallback alwa
 
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
-| Display | 32px | 700 (bold) | 1.2 | Monthly total amount ("$247.00"), dashboard hero number |
+| Display | 32px | 600 (semibold) | 1.2 | Monthly total amount ("$247.00"), dashboard hero number |
 | Heading | 20px | 600 (semibold) | 1.25 | Screen titles, section headers ("Upcoming Renewals") |
 | Body | 16px | 400 (regular) | 1.5 | Subscription names in list, form labels, description text |
-| Label | 13px | 500 (medium) | 1.4 | Chips (renewal dates), usage counter ("3 of 5 subscriptions used"), category badges, secondary metadata |
+| Label | 13px | 400 (regular) | 1.4 | Chips (renewal dates), usage counter ("3 of 5 subscriptions used"), category badges, secondary metadata |
 
-**Weight scale:** Regular (400), Medium (500), Semibold (600), Bold (700). Four weights declared; executor must not introduce additional weights.
+**Weight scale:** Regular (400) and Semibold (600). Two weights only — executor must not introduce additional weights.
 
 **Size scale:** 13, 16, 20, 32. Executor must not introduce additional sizes outside this scale.
 
 **Notes:**
+- Display and Heading are both Semibold (600); visual distinction comes from size (32px vs 20px), not weight.
 - Minimum body size on mobile is 16px (ui-ux-pro-max CRITICAL rule — readable-font-size).
 - Annual toggle label uses Body (16px / 400) — it is a control label, not a heading.
-- "Annual" badge next to the toggle uses Label (13px / 500).
+- "Annual" badge next to the toggle uses Label (13px / 400).
 
 ---
 
@@ -188,7 +188,7 @@ Triggered from Edit screen "Delete Subscription" tap.
 | Pattern | Bottom action sheet (not a modal dialog) |
 | Title | "Delete [Service Name]?" |
 | Body | "This will permanently remove it from your tracker." |
-| Confirm action | "Delete" — destructive fill (#EF4444 / #DC2626), full-width, 48px |
+| Confirm action | "Delete Subscription" — destructive fill (#EF4444 / #DC2626), full-width, 48px |
 | Cancel action | "Cancel" — secondary surface fill, full-width, 48px, above Confirm |
 | Animation | Slides up (react-native-reanimated), backdrop dims to 60% opacity |
 
@@ -249,7 +249,7 @@ Triggered when free user attempts to add a 6th subscription.
 | Paywall dismiss | "Maybe later" | Default |
 | Delete confirmation title | "Delete [Service Name]?" | Default |
 | Delete confirmation body | "This will permanently remove it from your tracker." | Default |
-| Delete confirm button | "Delete" | Default |
+| Delete confirm button | "Delete Subscription" | Checker revision 2026-04-04 |
 | Error: name required | "Service name is required." | Default |
 | Error: amount required | "Amount is required." | Default |
 | Error: invalid amount | "Enter a valid amount (e.g. 14.99)." | Default |
@@ -264,7 +264,7 @@ Triggered when free user attempts to add a 6th subscription.
 
 | Action | Trigger | Confirmation Pattern |
 |--------|---------|---------------------|
-| Delete Subscription | "Delete Subscription" text button in Edit screen | Bottom action sheet with "Delete [Name]?" + "This will permanently remove it from your tracker." |
+| Delete Subscription | "Delete Subscription" text button in Edit screen | Bottom action sheet with "Delete [Name]?" + "This will permanently remove it from your tracker." + confirm button "Delete Subscription" |
 
 No other destructive actions in Phase 1. Archive is soft-delete with no confirmation required (reversible).
 
