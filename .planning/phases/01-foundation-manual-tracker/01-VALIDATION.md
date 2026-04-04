@@ -19,7 +19,7 @@ created: 2026-04-04
 |----------|-------|
 | **Framework** | Jest + React Native Testing Library (Expo) |
 | **Config file** | `subtrackr/jest.config.js` — Wave 0 installs |
-| **Quick run command** | `cd subtrackr && pnpm test --passWithNoTests` |
+| **Quick run command** | `cd subtrackr && pnpm test` |
 | **Full suite command** | `cd subtrackr && pnpm test` |
 | **Estimated runtime** | ~30 seconds |
 
@@ -27,7 +27,7 @@ created: 2026-04-04
 
 ## Sampling Rate
 
-- **After every task commit:** Run `cd subtrackr && pnpm test --passWithNoTests`
+- **After every task commit:** Run `cd subtrackr && pnpm test`
 - **After every plan wave:** Run `cd subtrackr && pnpm test`
 - **Before `/gsd:verify-work`:** Full suite must be green
 - **Max feedback latency:** 30 seconds
@@ -45,7 +45,7 @@ created: 2026-04-04
 | 1-02-03 | 01-02 | 1 | schema | structural | `supabase db diff --use-migra` | ❌ W0 | ⬜ pending |
 | 1-03-01 | 01-03 | 2 | SUB-01, SUB-02 | unit | `pnpm test -- --testPathPattern=subscription` | ❌ W0 | ⬜ pending |
 | 1-03-02 | 01-03 | 2 | SUB-03, SUB-04, SUB-05 | unit | `pnpm test -- --testPathPattern=dashboard` | ❌ W0 | ⬜ pending |
-| 1-03-03 | 01-03 | 2 | SUB-06 | unit | `pnpm test -- --testPathPattern=archive` | ❌ W0 | ⬜ pending |
+| 1-03-03 | 01-03 | 2 | SUB-06 | unit | `pnpm test -- --testPathPattern=subscription` | ❌ W0 | ⬜ pending |
 | 1-04-01 | 01-04 | 3 | NOTF-01, NOTF-02 | unit | `pnpm test -- --testPathPattern=notification` | ❌ W0 | ⬜ pending |
 | 1-04-02 | 01-04 | 3 | monetization | unit | `pnpm test -- --testPathPattern=entitlement` | ❌ W0 | ⬜ pending |
 
