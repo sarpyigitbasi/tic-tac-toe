@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import { View, Text, StyleSheet } from 'react-native'
-
-// Placeholder — Dashboard content implemented in Plan 01-03
-export default function DashboardScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
-      <Text style={styles.subtitle}>Your subscriptions will appear here.</Text>
-    </View>
-=======
 import { useState } from 'react'
 import {
   View,
@@ -17,7 +6,6 @@ import {
   useColorScheme,
   StyleSheet,
   ScrollView,
-  Text,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { type Subscription } from '@subtrackr/core'
@@ -139,30 +127,10 @@ export default function DashboardScreen() {
         onDismiss={() => setShowPaywall(false)}
       />
     </SafeAreaView>
->>>>>>> worktree-agent-a3685fef
   )
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: '#6B7280',
-    textAlign: 'center',
-=======
   screen: {
     flex: 1,
   },
@@ -194,6 +162,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
->>>>>>> worktree-agent-a3685fef
   },
 })
