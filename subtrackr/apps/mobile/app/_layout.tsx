@@ -7,11 +7,11 @@ import { useAuth } from '../hooks/useAuth'
 
 const queryClient = new QueryClient()
 
-function RootLayoutContent() {
+function AuthGuard() {
   const { session, loading } = useAuth()
 
   if (loading) {
-    // Show nothing while session is being restored from LargeSecureStore
+    // Show nothing while session is being restored from LargeSecureStore (AUTH-04)
     return null
   }
 
@@ -32,11 +32,11 @@ export default function RootLayout() {
         android: process.env.EXPO_PUBLIC_RC_ANDROID_KEY!,
       })!,
     })
-    // Auth state listener wired in Plan 01-02
   }, [])
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthGuard />
       <Slot />
     </QueryClientProvider>
   )
