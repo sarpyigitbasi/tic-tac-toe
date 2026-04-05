@@ -30,12 +30,12 @@
 
 ### Subscriptions
 
-- [ ] **SUB-01**: User can view all active subscriptions in a dashboard
-- [ ] **SUB-02**: User can see total monthly and annual spend
-- [ ] **SUB-03**: User can manually add a subscription
-- [ ] **SUB-04**: User can edit subscription details (name, amount, date, category)
-- [ ] **SUB-05**: User can delete/archive a subscription
-- [ ] **SUB-06**: User can categorize subscriptions (Entertainment, Productivity, Health, etc.)
+- [x] **SUB-01**: User can view all active subscriptions in a dashboard
+- [x] **SUB-02**: User can see total monthly and annual spend
+- [x] **SUB-03**: User can manually add a subscription
+- [x] **SUB-04**: User can edit subscription details (name, amount, date, category)
+- [x] **SUB-05**: User can delete/archive a subscription
+- [x] **SUB-06**: User can categorize subscriptions (Entertainment, Productivity, Health, etc.)
 
 ### Notifications
 
@@ -91,12 +91,12 @@
 | AUTH-02 | Phase 1 | Pending |
 | AUTH-03 | Phase 1 | Pending |
 | AUTH-04 | Phase 1 | Pending |
-| SUB-01 | Phase 1 | Pending |
-| SUB-02 | Phase 1 | Pending |
-| SUB-03 | Phase 1 | Pending |
-| SUB-04 | Phase 1 | Pending |
-| SUB-05 | Phase 1 | Pending |
-| SUB-06 | Phase 1 | Pending |
+| SUB-01 | Phase 1 | Complete |
+| SUB-02 | Phase 1 | Complete |
+| SUB-03 | Phase 1 | Complete |
+| SUB-04 | Phase 1 | Complete |
+| SUB-05 | Phase 1 | Complete |
+| SUB-06 | Phase 1 | Complete |
 | NOTF-01 | Phase 1 | Pending |
 | NOTF-02 | Phase 1 | Pending |
 | INTG-01 | Phase 2 | Pending |
