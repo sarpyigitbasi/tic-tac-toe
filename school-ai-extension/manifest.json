@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "School AI Assistant",
+  "version": "1.0.0",
+  "description": "AI assistant that reads questions from any page or desktop app and answers them via Ollama.",
+
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "desktopCapture",
+    "storage"
+  ],
+
+  "host_permissions": [
+    "http://localhost:11434/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "School AI Assistant"
+  },
+
+  "commands": {
+    "toggle-overlay": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "mac": "Command+Shift+A"
+      },
+      "description": "Toggle AI overlay"
+    },
+    "capture-screen": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Capture screen and ask AI"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
